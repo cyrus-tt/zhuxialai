@@ -2,7 +2,7 @@ export default function Footer() {
   return (
     <footer className="mt-auto border-t border-border px-4 py-8 text-center text-sm text-text-lighter">
       <p className="mb-1">
-        住厦来 — 厦门五折租房补贴提醒工具
+        补贴喵 🐱 帮你记住每一笔
       </p>
       <p>
         本工具仅提供时间计算和提醒服务，不代表官方政策解读。

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useCallback, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import SubsidyForm from "@/components/SubsidyForm";
@@ -12,7 +12,20 @@ import ShareButton from "@/components/ShareButton";
 import Footer from "@/components/Footer";
 import { type DistrictId, getDistrict } from "@/lib/constants";
 import { calculateTimeline } from "@/lib/subsidy";
-import { Suspense } from "react";
+
+function parseClaimedParam(param: string | null): Set<number> {
+  if (!param) return new Set();
+  return new Set(
+    param
+      .split(",")
+      .map(Number)
+      .filter((n) => !isNaN(n) && n >= 0 && n < 10)
+  );
+}
+
+function serializeClaimedSet(set: Set<number>): string {
+  return Array.from(set).sort((a, b) => a - b).join(",");
+}
 
 function CalculatorContent() {
   const searchParams = useSearchParams();
@@ -24,28 +37,43 @@ function CalculatorContent() {
   const [district, setDistrict] = useState<DistrictId>(
     (searchParams.get("district") as DistrictId) || "siming"
   );
-  const [claimed, setClaimed] = useState(
-    Number(searchParams.get("claimed")) || 0
+  const [claimedIndices, setClaimedIndices] = useState<Set<number>>(
+    parseClaimedParam(searchParams.get("claimed"))
   );
 
-  // Sync to URL
   useEffect(() => {
     if (!startDate) return;
     const params = new URLSearchParams();
     params.set("d", startDate);
     params.set("district", district);
-    params.set("claimed", String(claimed));
+    if (claimedIndices.size > 0) {
+      params.set("claimed", serializeClaimedSet(claimedIndices));
+    }
     router.replace(`/calculator?${params.toString()}`, { scroll: false });
-  }, [startDate, district, claimed, router]);
+  }, [startDate, district, claimedIndices, router]);
+
+  const handleToggleClaimed = useCallback((index: number) => {
+    setClaimedIndices((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) {
+        next.delete(index);
+      } else {
+        next.add(index);
+      }
+      return next;
+    });
+  }, []);
 
   const timeline = useMemo(() => {
     if (!startDate) return null;
     const date = new Date(startDate);
     if (isNaN(date.getTime())) return null;
-    return calculateTimeline(date, district, claimed);
-  }, [startDate, district, claimed]);
+    return calculateTimeline(date, district, claimedIndices);
+  }, [startDate, district, claimedIndices]);
 
   const districtInfo = getDistrict(district);
+
+  const activePeriod = timeline?.currentPeriod || timeline?.nextPeriod || null;
 
   return (
     <div className="flex min-h-full flex-col">
@@ -58,7 +86,7 @@ function CalculatorContent() {
           >
             ← 首页
           </Link>
-          <h1 className="text-base font-semibold">🏠 住厦来</h1>
+          <h1 className="text-base font-semibold">🐱 补贴喵</h1>
           <Link
             href="/guide"
             className="text-sm font-medium text-primary hover:underline"
@@ -74,10 +102,8 @@ function CalculatorContent() {
           <SubsidyForm
             startDate={startDate}
             district={district}
-            claimed={claimed}
             onStartDateChange={setStartDate}
             onDistrictChange={setDistrict}
-            onClaimedChange={setClaimed}
           />
 
           {/* Results */}
@@ -95,18 +121,21 @@ function CalculatorContent() {
               {/* Actions */}
               <div className="space-y-3">
                 <CalendarExport
-                  periods={timeline.periods}
+                  nextPeriod={activePeriod}
                   districtName={districtInfo.name}
                 />
                 <ShareButton
                   startDate={startDate}
                   district={district}
-                  claimed={claimed}
+                  claimedIndices={claimedIndices}
                 />
               </div>
 
               {/* Full timeline */}
-              <Timeline periods={timeline.periods} />
+              <Timeline
+                periods={timeline.periods}
+                onToggleClaimed={handleToggleClaimed}
+              />
             </div>
           )}
         </div>
@@ -122,7 +151,7 @@ export default function CalculatorPage() {
     <Suspense
       fallback={
         <div className="flex min-h-full items-center justify-center">
-          <p className="text-text-light">加载中...</p>
+          <p className="text-text-light">补贴喵正在计算... 🐱</p>
         </div>
       }
     >

@@ -61,26 +61,21 @@ function getApplicationWindow(year: number, quarter: number) {
 export function calculateTimeline(
   startDate: Date,
   districtId: DistrictId,
-  claimedCount: number
+  claimedIndices: Set<number>
 ): SubsidyTimeline {
   const halfYearAmount = getHalfYearAmount(districtId);
   const now = new Date();
 
-  // The guarantee period starts from the first quarter after employment.
-  // First application can happen in the quarter of or after the start date.
-  // We pick the earliest possible quarter the user could have applied in.
-  const firstPossibleQuarterStart = startDate.getDate() <= 15 &&
+  const firstPossibleQuarterStart =
+    startDate.getDate() <= 15 &&
     QUARTER_WINDOWS.some(
       (w) =>
         w.start.month === Math.floor(startDate.getMonth() / 3) * 3 &&
         startDate.getMonth() <= w.end.month
     )
-    ? getQuarterStart(startDate)
-    : getNextQuarterStart(startDate);
+      ? getQuarterStart(startDate)
+      : getNextQuarterStart(startDate);
 
-  // Generate 10 half-year periods
-  // Each period covers 6 months; the application window is the quarter
-  // that covers the start of that half-year period.
   const periods: SubsidyPeriod[] = [];
 
   for (let i = 0; i < MAX_PERIODS; i++) {
@@ -95,18 +90,15 @@ export function calculateTimeline(
       0
     );
 
-    // Application window: the quarter that contains the half-year start
     const appYear = halfYearStart.getFullYear();
     const appQuarter = getQuarterNumber(halfYearStart);
     const applicationWindow = getApplicationWindow(appYear, appQuarter);
 
-    // Determine status
     let status: PeriodStatus;
     if (applicationWindow.end < now) {
-      // Past period
-      status = i < claimedCount ? "claimed" : "missed";
+      status = claimedIndices.has(i) ? "claimed" : "missed";
     } else if (applicationWindow.start <= now && now <= applicationWindow.end) {
-      status = i < claimedCount ? "claimed" : "current";
+      status = claimedIndices.has(i) ? "claimed" : "current";
     } else {
       status = "future";
     }
@@ -137,7 +129,9 @@ export function calculateTimeline(
   const currentPeriod = periods.find((p) => p.status === "current") || null;
   const nextPeriod =
     periods.find(
-      (p) => p.status === "future" && (!currentPeriod || p.index > currentPeriod.index)
+      (p) =>
+        p.status === "future" &&
+        (!currentPeriod || p.index > currentPeriod.index)
     ) || null;
 
   return {
@@ -170,4 +164,16 @@ export function getDaysUntil(target: Date): number {
 
 export function formatMoney(amount: number): string {
   return amount.toLocaleString("zh-CN");
+}
+
+export function getYearLabel(date: Date): string {
+  return `${date.getFullYear()}`;
+}
+
+export function getHalfYearLabel(date: Date): string {
+  return date.getMonth() < 6 ? "上半年" : "下半年";
+}
+
+export function isPastPeriod(period: SubsidyPeriod): boolean {
+  return period.status === "claimed" || period.status === "missed";
 }

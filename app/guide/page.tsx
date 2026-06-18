@@ -14,7 +14,7 @@ export default function GuidePage() {
           >
             ← 返回
           </Link>
-          <h1 className="text-base font-semibold">📖 操作指南</h1>
+          <h1 className="text-base font-semibold">🐱 操作指南</h1>
           <div className="w-10" />
         </div>
       </header>

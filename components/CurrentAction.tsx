@@ -16,7 +16,7 @@ export default function CurrentAction({
   if (!period) {
     return (
       <div className="rounded-2xl border border-success/20 bg-success-light/30 p-6 text-center">
-        <p className="text-3xl mb-2">🎉</p>
+        <p className="text-3xl mb-2">🐱🎉</p>
         <p className="font-semibold">恭喜！你已经领完了所有补贴</p>
       </div>
     );
@@ -41,9 +41,9 @@ export default function CurrentAction({
     >
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-2xl">{isCurrent ? "🔔" : "⏳"}</span>
+          <span className="text-2xl">{isCurrent ? "🐱🔔" : "🐱⏳"}</span>
           <h3 className="text-lg font-bold">
-            {isCurrent ? "现在该去申请了！" : "下一次申请"}
+            {isCurrent ? "喵！现在该去申请了！" : "下一次申请"}
           </h3>
         </div>
         <span
@@ -104,8 +104,7 @@ export default function CurrentAction({
           rel="noopener noreferrer"
           className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-warning to-[#FF9800] px-6 py-3.5 text-base font-semibold text-white shadow-md shadow-warning/20 transition-all hover:scale-[1.02] hover:shadow-lg active:scale-100"
         >
-          去 i厦门 申请
-          <span>→</span>
+          去 i厦门 申请 🐾
         </a>
       )}
     </div>

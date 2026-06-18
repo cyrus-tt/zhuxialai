@@ -2,33 +2,32 @@
 
 import { useState } from "react";
 import type { SubsidyPeriod } from "@/lib/subsidy";
-import { generateCalendarEvents, downloadIcs } from "@/lib/calendar";
+import { generateNextReminder, downloadIcs } from "@/lib/calendar";
 
 interface CalendarExportProps {
-  periods: SubsidyPeriod[];
+  nextPeriod: SubsidyPeriod | null;
   districtName: string;
 }
 
 export default function CalendarExport({
-  periods,
+  nextPeriod,
   districtName,
 }: CalendarExportProps) {
   const [downloaded, setDownloaded] = useState(false);
 
+  if (!nextPeriod) return null;
+
   const handleExport = () => {
-    const icsContent = generateCalendarEvents(periods, districtName);
+    const icsContent = generateNextReminder(nextPeriod, districtName);
     if (icsContent) {
-      downloadIcs(icsContent, "住厦来-补贴提醒.ics");
+      downloadIcs(
+        icsContent,
+        `补贴喵-第${nextPeriod.index + 1}次提醒.ics`
+      );
       setDownloaded(true);
       setTimeout(() => setDownloaded(false), 3000);
     }
   };
-
-  const futureCount = periods.filter(
-    (p) => p.status === "future" || p.status === "current"
-  ).length;
-
-  if (futureCount === 0) return null;
 
   return (
     <button
@@ -42,9 +41,7 @@ export default function CalendarExport({
       {downloaded ? (
         <>✅ 已下载！导入手机日历即可</>
       ) : (
-        <>
-          📅 添加到日历（{futureCount * 2} 个提醒）
-        </>
+        <>📅 添加第 {nextPeriod.index + 1} 次申请提醒到日历</>
       )}
     </button>
   );

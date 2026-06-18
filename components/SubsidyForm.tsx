@@ -1,32 +1,25 @@
 "use client";
 
-import { DISTRICTS, type DistrictId, getHalfYearAmount, MAX_PERIODS } from "@/lib/constants";
+import { DISTRICTS, type DistrictId } from "@/lib/constants";
 
 interface SubsidyFormProps {
   startDate: string;
   district: DistrictId;
-  claimed: number;
   onStartDateChange: (v: string) => void;
   onDistrictChange: (v: DistrictId) => void;
-  onClaimedChange: (v: number) => void;
 }
 
 export default function SubsidyForm({
   startDate,
   district,
-  claimed,
   onStartDateChange,
   onDistrictChange,
-  onClaimedChange,
 }: SubsidyFormProps) {
-  const halfAmount = getHalfYearAmount(district);
-  const remaining = (MAX_PERIODS - claimed) * halfAmount;
-
   return (
     <div className="mx-auto w-full max-w-lg">
       <div className="rounded-3xl border border-border bg-bg-card p-6 shadow-sm sm:p-8">
         <h2 className="mb-6 text-center text-xl font-semibold">
-          ✨ 填写你的信息
+          🐱 填写你的信息
         </h2>
 
         <div className="space-y-5">
@@ -70,48 +63,12 @@ export default function SubsidyForm({
               ))}
             </div>
           </div>
-
-          {/* Claimed count */}
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-text-light">
-              已领取次数
-            </label>
-            <p className="mb-2 text-xs text-text-lighter">
-              每领一次 = 半年的补贴（¥{halfAmount.toLocaleString()}）
-            </p>
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => onClaimedChange(Math.max(0, claimed - 1))}
-                disabled={claimed <= 0}
-                className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-bg text-lg font-bold text-text-light transition-colors hover:bg-primary-light disabled:opacity-30"
-              >
-                −
-              </button>
-              <div className="flex-1 text-center">
-                <span className="text-3xl font-bold text-primary">{claimed}</span>
-                <span className="ml-1 text-sm text-text-lighter">/ {MAX_PERIODS} 次</span>
-              </div>
-              <button
-                type="button"
-                onClick={() => onClaimedChange(Math.min(MAX_PERIODS, claimed + 1))}
-                disabled={claimed >= MAX_PERIODS}
-                className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-bg text-lg font-bold text-text-light transition-colors hover:bg-primary-light disabled:opacity-30"
-              >
-                +
-              </button>
-            </div>
-          </div>
         </div>
 
-        {/* Preview */}
         {startDate && (
-          <div className="mt-6 rounded-2xl bg-accent-light/50 p-4 text-center">
-            <p className="text-sm text-text-light">你最多还能领</p>
-            <p className="text-2xl font-bold text-primary">
-              ¥{remaining.toLocaleString()}
-            </p>
-          </div>
+          <p className="mt-4 text-center text-xs text-text-lighter">
+            🐾 在下方时间线中勾选你已经领过的批次
+          </p>
         )}
       </div>
     </div>
