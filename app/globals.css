@@ -1,26 +1,87 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --primary: #9B8EC4;
+  --primary-light: #E8E0F5;
+  --primary-dark: #7B6FA8;
+  --secondary: #F5B8C4;
+  --secondary-light: #FDE8ED;
+  --accent: #A8D8C8;
+  --accent-light: #D4EFE6;
+  --warning: #FFB74D;
+  --warning-light: #FFE0B2;
+  --bg: #FFFAF5;
+  --bg-card: #FFFFFF;
+  --text: #4A4458;
+  --text-light: #8E849B;
+  --text-lighter: #B8B0C5;
+  --success: #81C784;
+  --success-light: #C8E6C9;
+  --missed: #D1C4E9;
+  --missed-light: #EDE7F6;
+  --border: #F0EBF5;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-primary: var(--primary);
+  --color-primary-light: var(--primary-light);
+  --color-primary-dark: var(--primary-dark);
+  --color-secondary: var(--secondary);
+  --color-secondary-light: var(--secondary-light);
+  --color-accent: var(--accent);
+  --color-accent-light: var(--accent-light);
+  --color-warning: var(--warning);
+  --color-warning-light: var(--warning-light);
+  --color-bg: var(--bg);
+  --color-bg-card: var(--bg-card);
+  --color-text: var(--text);
+  --color-text-light: var(--text-light);
+  --color-text-lighter: var(--text-lighter);
+  --color-success: var(--success);
+  --color-success-light: var(--success-light);
+  --color-missed: var(--missed);
+  --color-missed-light: var(--missed-light);
+  --color-border: var(--border);
+  --font-sans: "Noto Sans SC", system-ui, -apple-system, sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
 }
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes count-up {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+.stagger-5 { animation-delay: 0.5s; }
