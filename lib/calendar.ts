@@ -36,7 +36,7 @@ export function generateCalendarEvents(
         `操作路径: i厦门APP → 住厦来 → 5折租房`,
         `咨询电话: 968383`,
         ``,
-        `—— 住厦来 zhuxialai.vercel.app`,
+        `—— 住厦来 cyrus-tt.github.io/zhuxialai`,
       ].join("\n"),
       alarms: [
         { action: "display", trigger: { before: true, days: 3 }, description: "3天后开始申请五折租房补贴" },
@@ -58,7 +58,7 @@ export function generateCalendarEvents(
         `赶紧去 i厦门APP 完成申请！`,
         `操作: ${actionType}`,
         ``,
-        `—— 住厦来 zhuxialai.vercel.app`,
+        `—— 住厦来 cyrus-tt.github.io/zhuxialai`,
       ].join("\n"),
       alarms: [
         { action: "display", trigger: { before: true, minutes: 0 }, description: "今天是补贴申请建议截止日" },
